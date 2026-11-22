@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>I'm sorry 💌</title>
+<style>
+:root{
+  --bg:#fde8ec; --card:#fffafb; --ink:#4a1f2b; --muted:#8a5a66;
+  --yes:#e0476b; --yes-ink:#fff; --no:#f3d3da; --no-ink:#4a1f2b;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#2a141b; --card:#3a1d27; --ink:#ffe6ec; --muted:#d9a8b5;
+    --yes:#ff6b8b; --yes-ink:#2a141b; --no:#5a2f3d; --no-ink:#ffe6ec;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.card{
+  background:var(--card); width:min(92vw,420px); padding:32px 24px 28px;
+  border-radius:28px; text-align:center;
+  box-shadow:0 10px 40px rgba(224,71,107,.18);
+}
+.emoji{font-size:64px; line-height:1; transition:transform .3s}
+h1{font-size:28px; line-height:1.25; margin:16px 0 6px; font-weight:700}
+p{color:var(--muted); margin:0 0 24px; font-size:16px; line-height:1.5}
+.row{display:flex; gap:14px; justify-content:center; align-items:center; min-height:56px}
+button{
+  font:inherit; font-size:18px; font-weight:700; border:0; cursor:pointer;
+  padding:14px 30px; border-radius:999px; touch-action:manipulation;
+}
+button:focus-visible{outline:3px solid var(--ink); outline-offset:3px}
+#yes{background:var(--yes); color:var(--yes-ink); transition:transform .2s}
+#no{background:var(--no); color:var(--no-ink); transition:left .25s ease, top .25s ease}
+#no.run{position:fixed; z-index:5}
+.hidden{display:none}
+.hearts{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+.heart{position:absolute; bottom:-40px; animation:rise linear forwards}
+@keyframes rise{to{transform:translateY(-115vh) rotate(25deg); opacity:0}}
+@media (prefers-reduced-motion: reduce){ .heart{animation-duration:.01s!important} #no{transition:none} }
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+
+<main class="card" id="ask">
+  <div class="emoji" id="face">🥺</div>
+  <h1 id="title">I'm really sorry.<br>Are you angry at me?</h1>
+  <p id="sub">Please be honest… do you still love me?</p>
+  <div class="row">
+    <button id="yes">Yes, I love you 💗</button>
+    <button id="no">No</button>
+  </div>
+</main>
+
+<main class="card hidden" id="done">
+  <div class="emoji">🥰</div>
+  <h1>Yay! I love you too.</h1>
+  <p>I'm sorry, and I promise to do better. Thank you for forgiving me, my love. 💌</p>
+</main>
+
+<script>
+(function(){
+  var yes=document.getElementById('yes'), no=document.getElementById('no');
+  var face=document.getElementById('face'), sub=document.getElementById('sub');
+  var teases=["Nope, try again 😜","Too slow! 🏃","Can't catch me 😝","Just say yes 🥹","Pretty please? 💗"];
+  var tries=0;
+
+  function dodge(e){
+    if(e){ e.preventDefault(); }
+    tries++;
+    no.classList.add('run');
+    var pad=12, w=no.offsetWidth, h=no.offsetHeight;
+    var maxX=Math.max(pad, window.innerWidth-w-pad);
+    var maxY=Math.max(pad, window.innerHeight-h-pad);
+    no.style.left=(pad+Math.random()*(maxX-pad))+'px';
+    no.style.top=(pad+Math.random()*(maxY-pad))+'px';
+    sub.textContent=teases[tries%teases.length];
+    face.textContent=['😢','🥺','😭','🥹'][tries%4];
+    yes.style.transform='scale('+Math.min(1+tries*0.12,1.8)+')';
+  }
+  no.addEventListener('mouseenter',dodge);
+  no.addEventListener('touchstart',dodge,{passive:false});
+  no.addEventListener('click',dodge);
+
+  yes.addEventListener('click',function(){
+    document.getElementById('ask').classList.add('hidden');
+    document.getElementById('done').classList.remove('hidden');
+    var box=document.getElementById('hearts');
+    for(var i=0;i<40;i++){
+      var s=document.createElement('span');
+      s.className='heart';
+      s.textContent=['💖','💗','💕','❤️'][i%4];
+      s.style.left=Math.random()*100+'vw';
+      s.style.fontSize=(18+Math.random()*28)+'px';
+      s.style.animationDuration=(3+Math.random()*3)+'s';
+      s.style.animationDelay=(Math.random()*1.5)+'s';
+      box.appendChild(s);
+    }
+  });
+})();
+</script>
+</body>
+</html>
